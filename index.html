@@ -6,33 +6,101 @@
     <title>UNACH CORE | EXAM SIMULATOR</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-green: #00ff41; --dark-bg: #050505; }
+        :root { --neon-green: #00ff41; --neon-red: #ff003c; --dark-bg: #050505; --neon-blue: #00f2ff; }
         * { box-sizing: border-box; }
         @media (min-width: 1024px) { * { cursor: none !important; } }
+        
         body {
             background-color: var(--dark-bg);
             color: var(--neon-green);
             font-family: 'Fira Code', monospace;
-            margin: 0; padding: 10px; padding-bottom: 50px;
+            margin: 0; padding: 10px;
             overflow-x: hidden; width: 100%;
         }
+
+        #custom-cursor { 
+            display: none; width: 20px; height: 20px; border: 2px solid #fff; 
+            border-radius: 50%; position: fixed; pointer-events: none; 
+            z-index: 10001; mix-blend-mode: difference; 
+            box-shadow: 0 0 10px #fff, 0 0 20px var(--neon-green); 
+        }
+        @media (min-width: 1024px) { #custom-cursor { display: block; } }
+
         #bg-video {
             position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%;
-            z-index: -2; filter: brightness(0.2); object-fit: cover;
+            z-index: -2; filter: brightness(0.15); object-fit: cover;
         }
         .overlay-dark { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: -1; }
-        #custom-cursor { display: none; width: 20px; height: 20px; border: 2px solid #fff; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; mix-blend-mode: difference; box-shadow: 0 0 10px #fff, 0 0 20px var(--neon-green); }
-        @media (min-width: 1024px) { #custom-cursor { display: block; } }
-        .rgb-container { position: relative; width: 100%; max-width: 850px; margin: 20px auto; padding: 2px; background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000); background-size: 300% 300%; animation: rgbFlow 4s linear infinite; border-radius: 10px; }
+        
+        /* Layout Principal */
+        .main-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+
+        .rgb-container { 
+            flex: 1;
+            min-width: 320px;
+            position: relative; 
+            padding: 2px; 
+            background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000); 
+            background-size: 300% 300%; 
+            animation: rgbFlow 4s linear infinite; 
+            border-radius: 10px; 
+        }
         @keyframes rgbFlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        
+        /* Sidebar de Reporte */
+        .status-sidebar {
+            width: 280px;
+            background: rgba(5, 5, 5, 0.9);
+            border: 1px solid var(--neon-green);
+            border-radius: 10px;
+            padding: 15px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+        }
+
+        .status-sidebar::-webkit-scrollbar { width: 5px; }
+        .status-sidebar::-webkit-scrollbar-thumb { background: var(--neon-green); }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+            padding: 5px;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+        }
+
+        .status-id { color: var(--neon-blue); }
+        .status-val { font-weight: bold; }
+        .val-pending { color: #555; }
+        .val-correct { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+        .val-wrong { color: var(--neon-red); text-shadow: 0 0 5px var(--neon-red); }
+
         .inner-content { background: rgba(5, 5, 5, 0.95); padding: 20px; border-radius: 8px; backdrop-filter: blur(10px); }
-        .photo-gallery { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 20px 0; }
-        .user-photo { width: 100px; height: 100px; border: 2px solid var(--neon-green); border-radius: 8px; object-fit: cover; }
+        .user-photo { width: 80px; height: 80px; border: 2px solid var(--neon-green); border-radius: 8px; object-fit: cover; margin: 5px; }
+        
         .question-block { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 255, 65, 0.2); margin-bottom: 20px; padding: 15px; border-radius: 8px; }
-        .options label { display: flex; align-items: center; padding: 12px; border-radius: 5px; margin-bottom: 5px; background: rgba(0, 255, 65, 0.05); cursor: pointer; transition: 0.2s; }
+        .correct-answer { border: 2px solid var(--neon-green) !important; background: rgba(0, 255, 65, 0.1) !important; }
+        .wrong-answer { border: 2px solid var(--neon-red) !important; background: rgba(255, 0, 60, 0.1) !important; }
+
+        .options label { display: flex; align-items: center; padding: 12px; border-radius: 5px; margin-bottom: 5px; background: rgba(0, 255, 65, 0.05); cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
         .options label:hover { background: rgba(0, 255, 65, 0.15); }
+        
         .btn-submit { width: 100%; background: transparent; border: 2px solid var(--neon-green); color: var(--neon-green); padding: 20px; font-weight: bold; font-size: 1.2rem; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
-        #results { display: none; position: fixed; inset: 0; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        
+        #results { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .btn-res { background:none; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 15px 30px; cursor: pointer; margin: 10px; font-family: 'Fira Code'; }
     </style>
 </head>
 <body>
@@ -43,32 +111,43 @@
 <div class="overlay-dark"></div>
 <div id="custom-cursor"></div>
 
-<div class="rgb-container">
-    <div class="inner-content">
-        <div style="text-align: center;">
-            <h1 style="font-size: 1.4rem; letter-spacing: 3px;">UNACH_SYSTEM_V4.0</h1>
-            <p style="font-size: 0.7rem;">[ ADMISIÓN 2026 | SOFTWARE ENGINEERING ]</p>
-            <div class="photo-gallery">
-                <img src="sepa la bola.jpg" alt="Dev 1" class="user-photo">
-                <img src="denji.jpg" alt="Dev 2" class="user-photo">
+<div class="main-wrapper">
+    <!-- Cuestionario -->
+    <div class="rgb-container">
+        <div class="inner-content">
+            <div style="text-align: center;">
+                <h1 style="font-size: 1.4rem; letter-spacing: 3px;">UNACH_SYSTEM_V4.0</h1>
+                <div class="photo-gallery">
+                    <img src="sepa la bola.jpg" alt="Dev 1" class="user-photo">
+                    <img src="denji.jpg" alt="Dev 2" class="user-photo">
+                </div>
             </div>
-        </div>
 
-        <div id="quiz-container"></div>
-        <button class="btn-submit" onclick="processExam()">[ FINALIZAR PROTOCOLO ]</button>
+            <div id="quiz-container"></div>
+            <button id="final-btn" class="btn-submit" onclick="processExam()">[ FINALIZAR PROTOCOLO ]</button>
+        </div>
+    </div>
+
+    <!-- Sidebar de Estatus -->
+    <div class="status-sidebar">
+        <h3 style="font-size: 0.8rem; border-bottom: 1px solid var(--neon-green); padding-bottom: 10px; text-align: center;">DIAGNÓSTICO_TIEMPO_REAL</h3>
+        <div id="status-list"></div>
     </div>
 </div>
 
 <div id="results">
-    <h1 id="res-status">RESULTADO DEL ANÁLISIS</h1>
+    <h1 id="res-status">ANÁLISIS COMPLETADO</h1>
     <div id="res-score" style="font-size: 4rem; color: var(--neon-green);">00</div>
     <div id="res-message" style="margin-bottom: 20px;"></div>
-    <button onclick="location.reload()" style="background:none; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 15px 30px;">REINTENTAR</button>
+    <div>
+        <button class="btn-res" onclick="location.reload()">REINTENTAR</button>
+        <button class="btn-res" onclick="document.getElementById('results').style.display='none'">VER REPORTE DETALLADO</button>
+    </div>
 </div>
 
 <script>
+// Mantengo tus preguntas iguales
 const questions = [
-    // MATEMÁTICAS (1-15)
     { q: "¿Cuál es el resultado de 3 + 2 * (5 - 1)?", opt: ["11", "20", "13", "14"], cor: 0, cat: "MATEMÁTICAS" },
     { q: "Resuelve: 2x + 5 = 15", opt: ["x = 5", "x = 10", "x = 7.5", "x = 2"], cor: 0, cat: "MATEMÁTICAS" },
     { q: "¿Cuál es la raíz cuadrada de 144?", opt: ["10", "12", "14", "16"], cor: 1, cat: "MATEMÁTICAS" },
@@ -84,8 +163,6 @@ const questions = [
     { q: "¿Cuántos segundos hay en una hora?", opt: ["60", "360", "3600", "1200"], cor: 2, cat: "MATEMÁTICAS" },
     { q: "Si 5 camisas cuestan $500, ¿cuánto cuestan 3?", opt: ["$300", "$250", "$350", "$400"], cor: 0, cat: "MATEMÁTICAS" },
     { q: "Logaritmo base 10 de 100:", opt: ["1", "10", "2", "0"], cor: 2, cat: "MATEMÁTICAS" },
-
-    // ESPAÑOL Y LENGUAJE (16-30)
     { q: "Sinónimo de 'Efímero':", opt: ["Eterno", "Pasajero", "Brillante", "Lento"], cor: 1, cat: "ESPAÑOL" },
     { q: "Antónimo de 'Altruista':", opt: ["Generoso", "Egoísta", "Bondadoso", "Fuerte"], cor: 1, cat: "ESPAÑOL" },
     { q: "¿Cuál palabra está escrita correctamente?", opt: ["Halla (encontrar)", "Haya (encontrar)", "Allá (encontrar)", "Haia"], cor: 0, cat: "ESPAÑOL" },
@@ -101,8 +178,6 @@ const questions = [
     { q: "¿Qué es un pleonasmo?", opt: ["Repetición innecesaria", "Una contradicción", "Un insulto", "Un saludo"], cor: 0, cat: "ESPAÑOL" },
     { q: "El punto y seguido sirve para:", opt: ["Terminar un párrafo", "Separar oraciones del mismo tema", "Indicar una pausa larga", "Hacer una lista"], cor: 1, cat: "ESPAÑOL" },
     { q: "Prefijo que significa 'debajo de':", opt: ["Super-", "Sub-", "Anti-", "Pre-"], cor: 1, cat: "ESPAÑOL" },
-
-    // CIENCIA Y TECNOLOGÍA (31-45)
     { q: "Principal componente del aire:", opt: ["Oxígeno", "Nitrógeno", "Dióxido de Carbono", "Hidrógeno"], cor: 1, cat: "CIENCIA" },
     { q: "Símbolo químico del Oro:", opt: ["Ag", "Fe", "Au", "Or"], cor: 2, cat: "CIENCIA" },
     { q: "Unidad básica de la vida:", opt: ["Tejido", "Átomo", "Célula", "Órgano"], cor: 2, cat: "CIENCIA" },
@@ -118,8 +193,6 @@ const questions = [
     { q: "Protocolo de transferencia de hipertexto:", opt: ["FTP", "HTTP", "SMTP", "TCP"], cor: 1, cat: "TECH" },
     { q: "¿Qué es un algoritmo?", opt: ["Un tipo de monitor", "Pasos para resolver un problema", "Un cable de red", "Una base de datos"], cor: 1, cat: "TECH" },
     { q: "Dispositivo de salida:", opt: ["Ratón", "Escáner", "Impresora", "Teclado"], cor: 2, cat: "TECH" },
-
-    // LÓGICA Y CULTURA (46-50)
     { q: "Si hoy es lunes, ¿qué día fue hace 3 días?", opt: ["Viernes", "Sábado", "Jueves", "Domingo"], cor: 0, cat: "LÓGICA" },
     { q: "Completa la serie: 2, 4, 8, 16, ...", opt: ["20", "24", "32", "64"], cor: 2, cat: "LÓGICA" },
     { q: "Capital de Chiapas:", opt: ["Tapachula", "Tuxtla Gutiérrez", "San Cristóbal", "Comitán"], cor: 1, cat: "CULTURA" },
@@ -128,8 +201,11 @@ const questions = [
 ];
 
 function init() {
-    const container = document.getElementById('quiz-container');
+    const quizContainer = document.getElementById('quiz-container');
+    const statusContainer = document.getElementById('status-list');
+    
     questions.forEach((item, i) => {
+        // Generar Preguntas
         const qDiv = document.createElement('div');
         qDiv.className = 'question-block';
         qDiv.innerHTML = `
@@ -137,28 +213,62 @@ function init() {
             <div style="font-weight: bold; margin-bottom: 12px; font-size: 0.9rem;">${i+1}. ${item.q}</div>
             <div class="options">
                 ${item.opt.map((o, idx) => `
-                    <label><input type="radio" name="q${i}" value="${idx}"><span style="margin-left:10px">${o}</span></label>
+                    <label id="label-${i}-${idx}"><input type="radio" name="q${i}" value="${idx}" onclick="updateStatus(${i})"><span style="margin-left:10px">${o}</span></label>
                 `).join('')}
             </div>
         `;
-        container.appendChild(qDiv);
+        quizContainer.appendChild(qDiv);
+
+        // Generar Items del Sidebar
+        const sDiv = document.createElement('div');
+        sDiv.className = 'status-item';
+        sDiv.id = `status-item-${i}`;
+        sDiv.innerHTML = `<span class="status-id">Q_${i+1}:</span> <span id="val-${i}" class="status-val val-pending">PENDIENTE</span>`;
+        statusContainer.appendChild(sDiv);
     });
+}
+
+function updateStatus(id) {
+    const valSpan = document.getElementById(`val-${id}`);
+    valSpan.innerText = "MARCADO";
+    valSpan.style.color = "var(--neon-blue)";
 }
 
 function processExam() {
     let score = 0;
+    
     questions.forEach((q, i) => {
-        const checked = document.querySelector(`input[name="q${i}"]:checked`);
-        if(checked && parseInt(checked.value) === q.cor) score++;
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const valSpan = document.getElementById(`val-${i}`);
+        const correctLabel = document.getElementById(`label-${i}-${q.cor}`);
+        
+        if (selected) {
+            const val = parseInt(selected.value);
+            if (val === q.cor) {
+                score++;
+                valSpan.innerText = "CORRECTO";
+                valSpan.className = "status-val val-correct";
+                correctLabel.classList.add('correct-answer');
+            } else {
+                valSpan.innerText = "ERROR";
+                valSpan.className = "status-val val-wrong";
+                correctLabel.classList.add('correct-answer');
+                document.getElementById(`label-${i}-${val}`).classList.add('wrong-answer');
+            }
+        } else {
+            valSpan.innerText = "OMITIDO";
+            valSpan.className = "status-val val-wrong";
+            correctLabel.classList.add('correct-answer');
+        }
     });
     
     document.getElementById('results').style.display = 'flex';
     document.getElementById('res-score').innerText = score + " / " + questions.length;
-    
-    const msg = score >= 40 ? "ESTADO: APTO PARA INGENIERÍA" : "ESTADO: REQUIERE MÁS REPASO";
-    document.getElementById('res-message').innerText = msg;
+    document.getElementById('res-message').innerText = score >= 40 ? "SISTEMA: ACCESO CONCEDIDO" : "SISTEMA: FALLO CRÍTICO - REINTENTAR";
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
 }
 
+// Cursor Custom
 if (window.innerWidth > 1024) {
     const cursor = document.getElementById('custom-cursor');
     document.addEventListener('mousemove', (e) => {
