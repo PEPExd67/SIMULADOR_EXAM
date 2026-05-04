@@ -3,163 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNACH CORE | KUSANAGI-GEAR RGB</title>
+    <title>UNACH CORE | EXAM SIMULATOR</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --neon-green: #00ff41;
-            --dark-bg: #050505;
-        }
-
-        * { 
-            box-sizing: border-box; 
-            /* Quitamos el cursor none en móviles para que se pueda usar */
-        }
-
-        @media (min-width: 1024px) {
-            * { cursor: none !important; }
-        }
-
+        :root { --neon-green: #00ff41; --dark-bg: #050505; }
+        * { box-sizing: border-box; }
+        @media (min-width: 1024px) { * { cursor: none !important; } }
         body {
             background-color: var(--dark-bg);
             color: var(--neon-green);
             font-family: 'Fira Code', monospace;
-            margin: 0;
-            padding: 10px;
-            padding-bottom: 50px;
-            overflow-x: hidden;
-            width: 100%;
+            margin: 0; padding: 10px; padding-bottom: 50px;
+            overflow-x: hidden; width: 100%;
         }
-
-        /* --- VIDEO DE FONDO --- */
         #bg-video {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            z-index: -2;
-            filter: brightness(0.2) contrast(1.2);
-            object-fit: cover;
+            position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%;
+            z-index: -2; filter: brightness(0.2); object-fit: cover;
         }
-
-        .overlay-dark {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: -1;
-        }
-
-        /* CURSOR (Solo visible en PC) */
-        #custom-cursor {
-            display: none;
-            width: 20px; height: 20px;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            box-shadow: 0 0 10px #fff, 0 0 20px var(--neon-green);
-        }
+        .overlay-dark { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: -1; }
+        #custom-cursor { display: none; width: 20px; height: 20px; border: 2px solid #fff; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; mix-blend-mode: difference; box-shadow: 0 0 10px #fff, 0 0 20px var(--neon-green); }
         @media (min-width: 1024px) { #custom-cursor { display: block; } }
-
-        /* CONTENEDOR RGB RESPONSIVE */
-        .rgb-container {
-            position: relative;
-            width: 100%;
-            max-width: 850px;
-            margin: 20px auto;
-            padding: 2px;
-            background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000);
-            background-size: 300% 300%;
-            animation: rgbFlow 4s linear infinite;
-            border-radius: 10px;
-        }
-
-        @keyframes rgbFlow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-
-        .inner-content {
-            background: rgba(5, 5, 5, 0.9);
-            padding: 20px;
-            border-radius: 8px;
-            backdrop-filter: blur(10px);
-        }
-
-        /* GALERÍA DE FOTOS ADAPTADA */
-        .photo-gallery {
-            display: flex;
-            flex-wrap: wrap; /* Para que se pongan una debajo de otra en cel pequeño */
-            gap: 15px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .user-photo {
-            width: 120px; /* Tamaño más cómodo para celular */
-            height: 120px;
-            border: 2px solid var(--neon-green);
-            border-radius: 8px;
-            object-fit: cover;
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
-        }
-
-        .header-section h1 {
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-            word-wrap: break-word;
-        }
-
-        /* BLOQUES DE PREGUNTAS ADAPTADOS */
-        .question-block {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(0, 255, 65, 0.2);
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 8px;
-        }
-
-        .options label {
-            display: flex;
-            align-items: center;
-            padding: 15px; /* Más grande para que sea fácil tocar con el dedo */
-            border-radius: 5px;
-            margin-bottom: 5px;
-            background: rgba(0, 255, 65, 0.05);
-        }
-
-        .btn-submit {
-            width: 100%;
-            background: transparent;
-            border: 2px solid var(--neon-green);
-            color: var(--neon-green);
-            padding: 20px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        /* RESULTADOS MÓVIL */
-        #results {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 10000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            text-align: center;
-        }
+        .rgb-container { position: relative; width: 100%; max-width: 850px; margin: 20px auto; padding: 2px; background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000); background-size: 300% 300%; animation: rgbFlow 4s linear infinite; border-radius: 10px; }
+        @keyframes rgbFlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        .inner-content { background: rgba(5, 5, 5, 0.95); padding: 20px; border-radius: 8px; backdrop-filter: blur(10px); }
+        .photo-gallery { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 20px 0; }
+        .user-photo { width: 100px; height: 100px; border: 2px solid var(--neon-green); border-radius: 8px; object-fit: cover; }
+        .question-block { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 255, 65, 0.2); margin-bottom: 20px; padding: 15px; border-radius: 8px; }
+        .options label { display: flex; align-items: center; padding: 12px; border-radius: 5px; margin-bottom: 5px; background: rgba(0, 255, 65, 0.05); cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: rgba(0, 255, 65, 0.15); }
+        .btn-submit { width: 100%; background: transparent; border: 2px solid var(--neon-green); color: var(--neon-green); padding: 20px; font-weight: bold; font-size: 1.2rem; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
+        #results { display: none; position: fixed; inset: 0; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
     </style>
 </head>
 <body>
@@ -168,40 +41,90 @@
     <source src="PinDown.io_@san1xx_1777925373.mp4" type="video/mp4">
 </video>
 <div class="overlay-dark"></div>
-
 <div id="custom-cursor"></div>
 
 <div class="rgb-container">
     <div class="inner-content">
-        <div class="header-section" style="text-align: center;">
-            <h1>UNACH_CORE_v3.0</h1>
-            <p style="font-size: 0.8rem;">[ OWNER: PEPE | KUSANAGI_GEAR ]</p>
-            
+        <div style="text-align: center;">
+            <h1 style="font-size: 1.4rem; letter-spacing: 3px;">UNACH_SYSTEM_V4.0</h1>
+            <p style="font-size: 0.7rem;">[ ADMISIÓN 2026 | SOFTWARE ENGINEERING ]</p>
             <div class="photo-gallery">
-                <!-- ASEGÚRATE QUE LOS NOMBRES SEAN IGUALES A TUS ARCHIVOS -->
                 <img src="sepa la bola.jpg" alt="Dev 1" class="user-photo">
                 <img src="__.jpg" alt="Dev 2" class="user-photo">
             </div>
-            <hr style="border: 0; border-top: 1px solid #222;">
         </div>
 
         <div id="quiz-container"></div>
-
-        <button class="btn-submit" onclick="processExam()">[ FINALIZAR EXAMEN ]</button>
+        <button class="btn-submit" onclick="processExam()">[ FINALIZAR PROTOCOLO ]</button>
     </div>
 </div>
 
 <div id="results">
-    <h1 id="res-status">RESULTADO DEL PROTOCOLO</h1>
+    <h1 id="res-status">RESULTADO DEL ANÁLISIS</h1>
     <div id="res-score" style="font-size: 4rem; color: var(--neon-green);">00</div>
-    <button onclick="location.reload()" style="background:none; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 15px 30px; margin-top: 20px;">REINICIAR SISTEMA</button>
+    <div id="res-message" style="margin-bottom: 20px;"></div>
+    <button onclick="location.reload()" style="background:none; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 15px 30px;">REINTENTAR</button>
 </div>
 
 <script>
 const questions = [
-    { q: "¿Cuál es el valor de x en: 5x - 10 = 40?", opt: ["8", "10", "12"], cor: 1, cat: "MATH" },
-    { q: "Si un círculo tiene radio 3, su área aproximada es:", opt: ["28.27", "18.84", "9.42"], cor: 0, cat: "MATH" },
-    { q: "Lenguaje para estructura de páginas web:", opt: ["Python", "HTML", "C++"], cor: 1, cat: "TECH" }
+    // MATEMÁTICAS (1-15)
+    { q: "¿Cuál es el resultado de 3 + 2 * (5 - 1)?", opt: ["11", "20", "13", "14"], cor: 0, cat: "MATEMÁTICAS" },
+    { q: "Resuelve: 2x + 5 = 15", opt: ["x = 5", "x = 10", "x = 7.5", "x = 2"], cor: 0, cat: "MATEMÁTICAS" },
+    { q: "¿Cuál es la raíz cuadrada de 144?", opt: ["10", "12", "14", "16"], cor: 1, cat: "MATEMÁTICAS" },
+    { q: "Si un triángulo tiene base 10 y altura 5, su área es:", opt: ["50", "25", "15", "100"], cor: 1, cat: "MATEMÁTICAS" },
+    { q: "Simplifica: (x^2 * x^3)", opt: ["x^5", "x^6", "2x^5", "x^1"], cor: 0, cat: "MATEMÁTICAS" },
+    { q: "¿Cuánto es el 15% de 200?", opt: ["20", "30", "45", "15"], cor: 1, cat: "MATEMÁTICAS" },
+    { q: "Valor de 'y' en: y/3 = 9", opt: ["3", "12", "27", "18"], cor: 2, cat: "MATEMÁTICAS" },
+    { q: "Suma de ángulos internos de un triángulo:", opt: ["90°", "360°", "180°", "270°"], cor: 2, cat: "MATEMÁTICAS" },
+    { q: "Factoriza x^2 - 9:", opt: ["(x-3)(x-3)", "(x+3)(x-3)", "(x+9)(x-1)", "x(x-9)"], cor: 1, cat: "MATEMÁTICAS" },
+    { q: "¿Cuál es el valor de Pi aproximado?", opt: ["3.1614", "3.1416", "3.4116", "3.1444"], cor: 1, cat: "MATEMÁTICAS" },
+    { q: "Resultado de -5 + (-8):", opt: ["3", "-3", "-13", "13"], cor: 2, cat: "MATEMÁTICAS" },
+    { q: "En la ecuación y = mx + b, 'm' representa:", opt: ["La intersección", "La pendiente", "La variable x", "El resultado"], cor: 1, cat: "MATEMÁTICAS" },
+    { q: "¿Cuántos segundos hay en una hora?", opt: ["60", "360", "3600", "1200"], cor: 2, cat: "MATEMÁTICAS" },
+    { q: "Si 5 camisas cuestan $500, ¿cuánto cuestan 3?", opt: ["$300", "$250", "$350", "$400"], cor: 0, cat: "MATEMÁTICAS" },
+    { q: "Logaritmo base 10 de 100:", opt: ["1", "10", "2", "0"], cor: 2, cat: "MATEMÁTICAS" },
+
+    // ESPAÑOL Y LENGUAJE (16-30)
+    { q: "Sinónimo de 'Efímero':", opt: ["Eterno", "Pasajero", "Brillante", "Lento"], cor: 1, cat: "ESPAÑOL" },
+    { q: "Antónimo de 'Altruista':", opt: ["Generoso", "Egoísta", "Bondadoso", "Fuerte"], cor: 1, cat: "ESPAÑOL" },
+    { q: "¿Cuál palabra está escrita correctamente?", opt: ["Halla (encontrar)", "Haya (encontrar)", "Allá (encontrar)", "Haia"], cor: 0, cat: "ESPAÑOL" },
+    { q: "Sustantivo en la frase: 'El gato corre rápido'", opt: ["Corre", "Rápido", "Gato", "El"], cor: 2, cat: "ESPAÑOL" },
+    { q: "Figura retórica en 'Tus labios de fresa':", opt: ["Hipérbole", "Metáfora", "Símil", "Aliteración"], cor: 1, cat: "ESPAÑOL" },
+    { q: "¿Cuál es un diptongo?", opt: ["Caos", "Aire", "Leer", "Poeta"], cor: 1, cat: "ESPAÑOL" },
+    { q: "Tipo de palabra según su acento: 'Árbol'", opt: ["Aguda", "Grave", "Esdrújula", "Sobresdrújula"], cor: 1, cat: "ESPAÑOL" },
+    { q: "Autor de 'Don Quijote de la Mancha':", opt: ["Lope de Vega", "Miguel de Cervantes", "García Márquez", "Quevedo"], cor: 1, cat: "ESPAÑOL" },
+    { q: "Sujeto de: 'Mañana nosotros iremos al cine'", opt: ["Nosotros", "Cine", "Mañana", "Iremos"], cor: 0, cat: "ESPAÑOL" },
+    { q: "Significado de la raíz 'Bio':", opt: ["Tierra", "Fuego", "Vida", "Agua"], cor: 2, cat: "ESPAÑOL" },
+    { q: "Oración en voz pasiva:", opt: ["Yo como pan", "El pan fue comido por mí", "Comeré pan", "Me gusta el pan"], cor: 1, cat: "ESPAÑOL" },
+    { q: "Palabra con error ortográfico:", opt: ["Exhibir", "Exhortar", "Exicibir", "Éxito"], cor: 2, cat: "ESPAÑOL" },
+    { q: "¿Qué es un pleonasmo?", opt: ["Repetición innecesaria", "Una contradicción", "Un insulto", "Un saludo"], cor: 0, cat: "ESPAÑOL" },
+    { q: "El punto y seguido sirve para:", opt: ["Terminar un párrafo", "Separar oraciones del mismo tema", "Indicar una pausa larga", "Hacer una lista"], cor: 1, cat: "ESPAÑOL" },
+    { q: "Prefijo que significa 'debajo de':", opt: ["Super-", "Sub-", "Anti-", "Pre-"], cor: 1, cat: "ESPAÑOL" },
+
+    // CIENCIA Y TECNOLOGÍA (31-45)
+    { q: "Principal componente del aire:", opt: ["Oxígeno", "Nitrógeno", "Dióxido de Carbono", "Hidrógeno"], cor: 1, cat: "CIENCIA" },
+    { q: "Símbolo químico del Oro:", opt: ["Ag", "Fe", "Au", "Or"], cor: 2, cat: "CIENCIA" },
+    { q: "Unidad básica de la vida:", opt: ["Tejido", "Átomo", "Célula", "Órgano"], cor: 2, cat: "CIENCIA" },
+    { q: "¿Quién propuso la teoría de la evolución?", opt: ["Newton", "Darwin", "Einstein", "Tesla"], cor: 1, cat: "CIENCIA" },
+    { q: "Planeta más cercano al sol:", opt: ["Venus", "Marte", "Mercurio", "Tierra"], cor: 2, cat: "CIENCIA" },
+    { q: "Hardware es:", opt: ["Programas", "Parte física", "Internet", "Virus"], cor: 1, cat: "TECH" },
+    { q: "Software es:", opt: ["Teclado", "Monitor", "Sistema Operativo", "Cables"], cor: 2, cat: "TECH" },
+    { q: "¿Qué significa CPU?", opt: ["Central Processing Unit", "Computer Personal Unit", "Control Power Unit", "Core Port Unit"], cor: 0, cat: "TECH" },
+    { q: "Un Byte equivale a:", opt: ["10 bits", "8 bits", "1024 bits", "1 bit"], cor: 1, cat: "TECH" },
+    { q: "Fundador de Microsoft:", opt: ["Steve Jobs", "Mark Zuckerberg", "Bill Gates", "Elon Musk"], cor: 2, cat: "TECH" },
+    { q: "Memoria de acceso aleatorio:", opt: ["ROM", "SSD", "RAM", "HDD"], cor: 2, cat: "TECH" },
+    { q: "Es un lenguaje de programación:", opt: ["HTML", "Python", "Windows", "Excel"], cor: 1, cat: "TECH" },
+    { q: "Protocolo de transferencia de hipertexto:", opt: ["FTP", "HTTP", "SMTP", "TCP"], cor: 1, cat: "TECH" },
+    { q: "¿Qué es un algoritmo?", opt: ["Un tipo de monitor", "Pasos para resolver un problema", "Un cable de red", "Una base de datos"], cor: 1, cat: "TECH" },
+    { q: "Dispositivo de salida:", opt: ["Ratón", "Escáner", "Impresora", "Teclado"], cor: 2, cat: "TECH" },
+
+    // LÓGICA Y CULTURA (46-50)
+    { q: "Si hoy es lunes, ¿qué día fue hace 3 días?", opt: ["Viernes", "Sábado", "Jueves", "Domingo"], cor: 0, cat: "LÓGICA" },
+    { q: "Completa la serie: 2, 4, 8, 16, ...", opt: ["20", "24", "32", "64"], cor: 2, cat: "LÓGICA" },
+    { q: "Capital de Chiapas:", opt: ["Tapachula", "Tuxtla Gutiérrez", "San Cristóbal", "Comitán"], cor: 1, cat: "CULTURA" },
+    { q: "Presidente de México durante la Revolución:", opt: ["Benito Juárez", "Francisco I. Madero", "Porfirio Díaz", "Lázaro Cárdenas"], cor: 1, cat: "HISTORIA" },
+    { q: "¿En qué estado se encuentra la UNACH?", opt: ["Oaxaca", "Tabasco", "Chiapas", "Veracruz"], cor: 2, cat: "UNACH" }
 ];
 
 function init() {
@@ -210,8 +133,8 @@ function init() {
         const qDiv = document.createElement('div');
         qDiv.className = 'question-block';
         qDiv.innerHTML = `
-            <div style="font-size: 0.6rem; color: #666; margin-bottom: 5px;">ID: UNCH-2026-${i} | ${item.cat}</div>
-            <div style="font-weight: bold; margin-bottom: 15px; font-size: 0.9rem;">${i+1}. ${item.q}</div>
+            <div style="font-size: 0.6rem; color: #555; margin-bottom: 5px;">[ ${item.cat} | ID:0${i+1} ]</div>
+            <div style="font-weight: bold; margin-bottom: 12px; font-size: 0.9rem;">${i+1}. ${item.q}</div>
             <div class="options">
                 ${item.opt.map((o, idx) => `
                     <label><input type="radio" name="q${i}" value="${idx}"><span style="margin-left:10px">${o}</span></label>
@@ -228,11 +151,14 @@ function processExam() {
         const checked = document.querySelector(`input[name="q${i}"]:checked`);
         if(checked && parseInt(checked.value) === q.cor) score++;
     });
+    
     document.getElementById('results').style.display = 'flex';
-    document.getElementById('res-score').innerText = score + "/" + questions.length;
+    document.getElementById('res-score').innerText = score + " / " + questions.length;
+    
+    const msg = score >= 40 ? "ESTADO: APTO PARA INGENIERÍA" : "ESTADO: REQUIERE MÁS REPASO";
+    document.getElementById('res-message').innerText = msg;
 }
 
-// Cursor solo para PC
 if (window.innerWidth > 1024) {
     const cursor = document.getElementById('custom-cursor');
     document.addEventListener('mousemove', (e) => {
@@ -243,6 +169,5 @@ if (window.innerWidth > 1024) {
 
 init();
 </script>
-
 </body>
 </html>
