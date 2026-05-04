@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNACH CORE | KUSANAGI-GEAR RGB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-green: #00ff41;
+            --dark-bg: #050505;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            cursor: none !important;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--neon-green);
+            font-family: 'Fira Code', monospace;
+            margin: 0;
+            padding-bottom: 100px;
+            overflow-x: hidden;
+        }
+
+        /* --- VIDEO DE FONDO --- */
+        #bg-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -2; /* Al fondo de todo */
+            filter: brightness(0.3) contrast(1.2); /* Oscurecemos un poco para que el texto resalte */
+            object-fit: cover;
+        }
+
+        .overlay-dark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Capa de oscuridad extra */
+            z-index: -1;
+        }
+
+        /* CURSOR ANIMADO */
+        #custom-cursor {
+            width: 20px; height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            box-shadow: 0 0 10px #fff, 0 0 20px var(--neon-green);
+        }
+
+        .cursor-trail {
+            width: 6px; height: 6px;
+            position: fixed;
+            background: var(--neon-green);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.5;
+        }
+
+        /* BORDE RGB ANIMADO */
+        .rgb-container {
+            position: relative;
+            max-width: 850px;
+            margin: 50px auto;
+            padding: 3px;
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+            background-size: 400% 400%;
+            animation: rgbFlow 8s linear infinite;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
+        }
+
+        @keyframes rgbFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .inner-content {
+            background: rgba(10, 10, 10, 0.9); /* Un poco de transparencia para ver el video */
+            padding: 40px;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* SECCIÓN DE FOTOS */
+        .photo-gallery {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .user-photo {
+            width: 150px;
+            height: 150px;
+            border: 2px solid var(--neon-green);
+            border-radius: 5px;
+            object-fit: cover;
+            transition: 0.3s;
+            filter: grayscale(0.5);
+        }
+
+        .user-photo:hover {
+            filter: grayscale(0);
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+
+        .header-section { text-align: center; margin-bottom: 50px; }
+
+        .question-block {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 65, 0.1);
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .question-block:hover {
+            background: rgba(0, 255, 65, 0.08);
+            border-color: var(--neon-green);
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            cursor: pointer;
+        }
+
+        input[type="radio"] { margin-right: 15px; accent-color: var(--neon-green); }
+
+        .btn-submit {
+            width: 100%;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 25px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            cursor: pointer;
+            transition: 0.4s;
+        }
+
+        .btn-submit:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 50px var(--neon-green);
+        }
+
+        #results {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<!-- VIDEO DE FONDO -->
+<video autoplay muted loop id="bg-video">
+    <source src="PinDown.io_@san1xx_1777925373.mp4" type="video/mp4">
+    <!-- Si no tienes video, puedes usar este link de ejemplo para probar: 
+    https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-circuit-board-1549-large.mp4 -->
+</video>
+<div class="overlay-dark"></div>
+
+<div id="custom-cursor"></div>
+
+<div class="rgb-container">
+    <div class="inner-content">
+        <div class="header-section">
+            <h1 style="letter-spacing: 10px;">UNACH_CORE_v3.0</h1>
+            <p>[ DATA_OWNER: PEPE | KUSANAGI_GEAR ]</p>
+            
+            <!-- SECCIÓN DE FOTOS AÑADIDA -->
+            <div class="photo-gallery">
+                <img src="sepa la bola.jpg" alt="Dev 1" class="user-photo">
+                <img src="__.jpg" alt="Dev 2" class="user-photo">
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+        </div>
+
+        <div id="quiz-container"></div>
+
+        <button class="btn-submit" onclick="processExam()">[ FINALIZAR PROTOCOLO ]</button>
+    </div>
+</div>
+
+<div id="results">
+    <h1 id="res-status">ANALIZANDO...</h1>
+    <div id="res-score" style="font-size: 5rem; margin: 20px 0;">00</div>
+    <button onclick="location.reload()" style="background:none; border: 1px solid #fff; color:#fff; padding: 10px 30px; cursor: pointer;">REBOOT SYSTEM</button>
+</div>
+
+<script>
+// Mantén tus preguntas aquí
+const questions = [
+    { q: "¿Cuál es el valor de x en: 5x - 10 = 40?", opt: ["8", "10", "12"], cor: 1, cat: "MATH" },
+    { q: "Si un círculo tiene radio 3, su área aproximada es:", opt: ["28.27", "18.84", "9.42"], cor: 0, cat: "MATH" },
+    { q: "Lenguaje para estructura de páginas web:", opt: ["Python", "HTML", "C++"], cor: 1, cat: "TECH" },
+    // Añade el resto de tus preguntas aquí...
+];
+
+const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    
+    if (Math.random() > 0.6) {
+        const trail = document.createElement('div');
+        trail.className = 'cursor-trail';
+        trail.style.left = e.clientX + 'px';
+        trail.style.top = e.clientY + 'px';
+        document.body.appendChild(trail);
+        setTimeout(() => trail.remove(), 400);
+    }
+});
+
+function init() {
+    const container = document.getElementById('quiz-container');
+    questions.forEach((item, i) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question-block';
+        qDiv.innerHTML = `
+            <div style="font-size: 0.7rem; color: #555; margin-bottom: 10px;">ID: UNCH-2026-0${i} | ${item.cat}</div>
+            <div style="font-weight: bold; margin-bottom: 15px;">${i+1}. ${item.q}</div>
+            <div class="options">
+                ${item.opt.map((o, idx) => `
+                    <label><input type="radio" name="q${i}" value="${idx}"><span>${o}</span></label>
+                `).join('')}
+            </div>
+        `;
+        container.appendChild(qDiv);
+    });
+}
+
+function processExam() {
+    let score = 0;
+    questions.forEach((q, i) => {
+        const checked = document.querySelector(`input[name="q${i}"]:checked`);
+        if(checked && parseInt(checked.value) === q.cor) score++;
+    });
+    document.getElementById('results').style.display = 'flex';
+    document.getElementById('res-score').innerText = score;
+}
+
+init();
+</script>
+
+</body>
+</html>
